@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cache\ArgumentoCacheInvalidoException.cs" />
+    <Compile Include="Cache\InvalidCacheArgumentException.cs" />
     <Compile Include="Cache\CacheHelper.cs" />
     <Compile Include="Linq\Enumerable.cs" />
     <Compile Include="Linq\LambdaComparer.cs" />
