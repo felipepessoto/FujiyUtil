@@ -8,8 +8,8 @@
     <ProjectGuid>{73FC343B-13DD-4CA6-A2AD-551403759270}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Fujiy.ExtensionMethods</RootNamespace>
-    <AssemblyName>Fujiy.ExtensionMethods</AssemblyName>
+    <RootNamespace>Fujiy.Util</RootNamespace>
+    <AssemblyName>Fujiy.Util</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,8 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="InterfaceEnumerableExtension.cs" />
-    <Compile Include="LambdaComparer.cs" />
+    <Compile Include="ExtensionMethods\InterfaceEnumerableExtension.cs" />
+    <Compile Include="ExtensionMethods\LambdaComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

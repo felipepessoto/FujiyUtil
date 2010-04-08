@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Fujiy.ExtensionMethods")]
+[assembly: AssemblyTitle("Fujiy.Util")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Fujiy")]
-[assembly: AssemblyProduct("Fujiy.ExtensionMethods")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2010")]
+[assembly: AssemblyProduct("Fujiy.Util")]
+[assembly: AssemblyCopyright("Copyright © Fujiy.Net 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

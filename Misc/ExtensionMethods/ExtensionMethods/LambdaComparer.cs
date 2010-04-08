@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Fujiy.ExtensionMethods
+namespace Fujiy.Util.ExtensionMethods
 {
     public class LambdaComparer<T> : IEqualityComparer<T>
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Fujiy.ExtensionMethods
+namespace Fujiy.Util.ExtensionMethods
 {
     public static class InterfaceEnumerableExtension
     {
