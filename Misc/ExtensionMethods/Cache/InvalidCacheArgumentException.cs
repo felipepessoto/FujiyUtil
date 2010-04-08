@@ -4,21 +4,21 @@ using System.Runtime.Serialization;
 namespace Fujiy.Util.Cache
 {
     [Serializable]
-    public class ArgumentoCacheInvalidoException : Exception
+    public class InvalidCacheArgumentException : Exception
     {
         /// <summary>
         /// Class Constructor
         /// </summary>
         /// <param name="info">Stores all the data needed to serialize or deserialize an object</param>
         /// <param name="context"></param>
-        protected ArgumentoCacheInvalidoException(SerializationInfo info, StreamingContext context)
+        protected InvalidCacheArgumentException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         { }
 
         /// <summary>
         /// Class Constructor
         /// </summary>
-        public ArgumentoCacheInvalidoException()
+        public InvalidCacheArgumentException()
             : base()
         { }
 
@@ -26,7 +26,7 @@ namespace Fujiy.Util.Cache
         /// Class Constructor
         /// </summary>
         /// <param name="message">Text that will be displayed</param>
-        public ArgumentoCacheInvalidoException(string message)
+        public InvalidCacheArgumentException(string message)
             : base(message)
         { }
 
@@ -35,7 +35,7 @@ namespace Fujiy.Util.Cache
         /// </summary>
         /// <param name="message">Text that will be displayed</param>
         /// <param name="innerException">Wrapped exception</param>
-        public ArgumentoCacheInvalidoException(string message, Exception innerException)
+        public InvalidCacheArgumentException(string message, Exception innerException)
             : base(message, innerException)
         { }
     }

@@ -35,7 +35,7 @@ namespace Fujiy.Util.Cache
             {
                 if (!IsValidType(metodo.Arguments[i].Type))
                 {
-                    throw new ArgumentoCacheInvalidoException("Não foi possível inferir uma chave a partir dos parâmetros. Indice do parametro: " + i);
+                    throw new InvalidCacheArgumentException("Não foi possível inferir uma chave a partir dos parâmetros. Indice do parametro: " + i);
                 }
             }
         }
