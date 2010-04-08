@@ -8,6 +8,12 @@ namespace Fujiy.ExtensionMethods
         private readonly Func<T, T, bool> lambdaComparer;
         private readonly Func<T, int> lambdaHash;
 
+
+        public LambdaComparer(Func<T, T, bool> lambdaComparer)
+            : this(lambdaComparer, o => 0)
+        {
+        }
+
         public LambdaComparer(Func<T, T, bool> lambdaComparer, Func<T, int> lambdaHash)
         {
             if (lambdaComparer == null)
