@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Fujiy.Util.ExtensionMethods
+namespace Fujiy.Util.Linq
 {
-    public static class InterfaceEnumerableExtension
+    public static class Enumerable
     {
         public static IEnumerable<TSource> Except<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second, Func<TSource, TSource, bool> comparer, Func<TSource, int> hashFunction)
         {
