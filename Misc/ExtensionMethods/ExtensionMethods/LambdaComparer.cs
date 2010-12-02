@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Fujiy.Util.Linq
+namespace Fujiy.Util.ExtensionMethods
 {
-    internal class LambdaComparer<T> : IEqualityComparer<T>
+    public class LambdaComparer<T> : IEqualityComparer<T>
     {
         private readonly Func<T, T, bool> lambdaComparer;
         private readonly Func<T, int> lambdaHash;
 
-
-        public LambdaComparer(Func<T, T, bool> lambdaComparer)
-            : this(lambdaComparer, o => 0)
-        {
-        }
+        public LambdaComparer(Func<T, T, bool> lambdaComparer) : this(lambdaComparer, x => 0) { }
 
         public LambdaComparer(Func<T, T, bool> lambdaComparer, Func<T, int> lambdaHash)
         {
@@ -36,5 +32,3 @@ namespace Fujiy.Util.Linq
         }
     }
 }
-
-

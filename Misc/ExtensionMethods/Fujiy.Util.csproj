@@ -41,12 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cache\CacheOptions.cs" />
     <Compile Include="Cache\InvalidCacheArgumentException.cs" />
     <Compile Include="Cache\CacheHelper.cs" />
-    <Compile Include="Linq\Enumerable.cs" />
-    <Compile Include="Linq\LambdaComparer.cs" />
+    <Compile Include="Cache\InvalidCachedFuncException.cs" />
+    <Compile Include="ExtensionMethods\LambdaComparer.cs" />
+    <Compile Include="Collections\Generic\PagedCollection.cs" />
+    <Compile Include="ExtensionMethods\Enumerable.cs" />
+    <Compile Include="ExtensionMethods\EnumExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
