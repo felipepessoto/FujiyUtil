@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Linq;
 using System.Web;
@@ -9,13 +8,12 @@ using System.Web.Caching;
 using System.Xml;
 using System.Globalization;
 
-namespace Fujiy.Util.Cache
+namespace Fujiy.Util.Caching
 {
     public static class CacheHelper
     {
         private static readonly ValidType[] ValidWrappingGenericTypes = new[] { new ValidType(typeof(Nullable<>)) };
         private static readonly Dictionary<string, string> KeysGroups = new Dictionary<string, string>();
-        public static readonly string AnonymousGroup = string.Empty;
         private static readonly ValidType[] ValidTypes = new[]
                              {
                                  new ValidType(typeof (byte)),
@@ -37,6 +35,8 @@ namespace Fujiy.Util.Cache
                                  new ValidType(typeof (Guid))
                              };
 
+        public static readonly string AnonymousGroup = string.Empty;
+
         /// <summary>
         /// Não foi usado Auto-Properties pois a valor inicial é true. Para isso seria necessário alterar o valor no construtor static. Construtores static degradam a performance.
         /// </summary>
@@ -44,25 +44,25 @@ namespace Fujiy.Util.Cache
         public static bool CacheEnabled { get { return cacheEnabled; } set { cacheEnabled = value; } }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Não há outra técnica para isto. E não aumenta a complexidade já que a expression é um syntactic sugar, o cliente apenas escreve um lambda")]
-        public static TResult FromCacheOrExecute<TResult>(this System.Web.Caching.Cache cache, Expression<Func<TResult>> func)
+        public static TResult FromCacheOrExecute<TResult>(this Cache cache, Expression<Func<TResult>> func)
         {
             return FromCacheOrExecute(cache, func, null, null);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Não há outra técnica para isto. E não aumenta a complexidade já que a expression é um syntactic sugar, o cliente apenas escreve um lambda")]
-        public static TResult FromCacheOrExecute<TResult>(this System.Web.Caching.Cache cache, Expression<Func<TResult>> func, string key)
+        public static TResult FromCacheOrExecute<TResult>(this Cache cache, Expression<Func<TResult>> func, string key)
         {
             return FromCacheOrExecute(cache, func, key, null);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Não há outra técnica para isto. E não aumenta a complexidade já que a expression é um syntactic sugar, o cliente apenas escreve um lambda")]
-        public static TResult FromCacheOrExecute<TResult>(this System.Web.Caching.Cache cache, Expression<Func<TResult>> func, CacheOptions cacheOptions)
+        public static TResult FromCacheOrExecute<TResult>(this Cache cache, Expression<Func<TResult>> func, CacheOptions cacheOptions)
         {
             return FromCacheOrExecute(cache, func, null, cacheOptions);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "3", Justification = "func é validado no método ValidateFunc"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Não há outra técnica para isto. E não aumenta a complexidade já que a expression é um syntactic sugar, o cliente apenas escreve um lambda")]
-        public static TResult FromCacheOrExecute<TResult>(this System.Web.Caching.Cache cache, Expression<Func<TResult>> func, string key, CacheOptions cacheOptions)
+        public static TResult FromCacheOrExecute<TResult>(this Cache cache, Expression<Func<TResult>> func, string key, CacheOptions cacheOptions)
         {
             if (cache == null)
                 throw new ArgumentNullException("cache");
@@ -115,21 +115,21 @@ namespace Fujiy.Util.Cache
             }
         }
 
-        public static ReadOnlyCollection<string> GetKeysByGroup(string groupName)
+        public static IEnumerable<string> GetKeysByGroup(string groupName)
         {
             lock (KeysGroups)
             {
-                return KeysGroups.Where(x => x.Value == groupName).Select(x => x.Key).ToList().AsReadOnly();
+                return KeysGroups.Where(x => x.Value == groupName).Select(x => x.Key).ToList();
             }
         }
 
-        public static ReadOnlyCollection<string> Groups
+        public static IEnumerable<string> Groups
         {
             get
             {
                 lock (KeysGroups)
                 {
-                    return KeysGroups.Values.Distinct().ToList().AsReadOnly();
+                    return KeysGroups.Values.Distinct().ToList();
                 }
             }
         }

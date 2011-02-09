@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web.Caching;
 
-namespace Fujiy.Util.Cache
+namespace Fujiy.Util.Caching
 {
     /// <summary>
     /// Especifica opcões para um item do Cache.
@@ -24,8 +24,8 @@ namespace Fujiy.Util.Cache
 
         public CacheOptions()
         {
-            AbsoluteExpiration = System.Web.Caching.Cache.NoAbsoluteExpiration;
-            SlidingExpiration = System.Web.Caching.Cache.NoSlidingExpiration;
+            AbsoluteExpiration = Cache.NoAbsoluteExpiration;
+            SlidingExpiration = Cache.NoSlidingExpiration;
             Priority = CacheItemPriority.Normal;
             GroupName = CacheHelper.AnonymousGroup;
         }

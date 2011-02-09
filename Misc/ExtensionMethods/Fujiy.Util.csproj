@@ -41,10 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cache\CacheOptions.cs" />
-    <Compile Include="Cache\InvalidCacheArgumentException.cs" />
-    <Compile Include="Cache\CacheHelper.cs" />
-    <Compile Include="Cache\InvalidCachedFuncException.cs" />
+    <Compile Include="Caching\CacheOptions.cs" />
+    <Compile Include="Caching\InvalidCacheArgumentException.cs" />
+    <Compile Include="Caching\CacheHelper.cs" />
+    <Compile Include="Caching\InvalidCachedFuncException.cs" />
     <Compile Include="ExtensionMethods\LambdaComparer.cs" />
     <Compile Include="Collections\Generic\PagedCollection.cs" />
     <Compile Include="ExtensionMethods\Enumerable.cs" />
