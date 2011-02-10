@@ -78,8 +78,6 @@ namespace Fujiy.Util.Caching
                 key = GenerateKey(metodo);
             }
 
-            AddKeyOnGroup(cacheOptions.GroupName, key);
-
             object returnObject = null;
 
             if (CacheEnabled)
@@ -87,7 +85,12 @@ namespace Fujiy.Util.Caching
                 returnObject = cache[key];
             }
 
-            if (!(returnObject is TResult))
+            if (returnObject is TResult)
+            {
+                //Garante que o nome do Grupo será atualizado
+                AddKeyOnGroup(cacheOptions.GroupName, key);
+            }
+            else
             {
                 Action initializer = cacheOptions.ExecutionInitializer;
                 if (initializer != null)
@@ -99,6 +102,7 @@ namespace Fujiy.Util.Caching
                 {
                     cache.Add(key, returnObject, cacheOptions.Dependencies, cacheOptions.AbsoluteExpiration,
                               cacheOptions.SlidingExpiration, cacheOptions.Priority, CacheItemRemovedCallback);
+                    AddKeyOnGroup(cacheOptions.GroupName, key);
                 }
             }
             return (TResult) returnObject;

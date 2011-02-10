@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Fujiy")]
 [assembly: AssemblyProduct("Fujiy.Util")]
-[assembly: AssemblyCopyright("Copyright © Fujiy.Net 2010")]
+[assembly: AssemblyCopyright("Copyright © Fujiy.Net 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
