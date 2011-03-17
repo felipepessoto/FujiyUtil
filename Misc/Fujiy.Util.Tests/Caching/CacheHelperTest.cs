@@ -35,103 +35,115 @@ namespace Fujiy.Util.Tests.Caching
 
             //Act
             Type tipoValidado = typeof(Byte);
-            bool retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            bool retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(SByte);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Int32);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(UInt32);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Int16);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(UInt16);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Int64);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(UInt64);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Single);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Double);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Char);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Boolean);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(String);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Decimal);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(DateTime);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(DateTimeOffset);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Guid);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
+            //Assert
+            Assert.IsTrue(retorno);
+
+            //Act
+            tipoValidado = typeof(Enum);
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
+            //Assert
+            Assert.IsTrue(retorno);
+
+            //Act
+            tipoValidado = typeof(EnumExemplo);
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
         }
@@ -145,97 +157,103 @@ namespace Fujiy.Util.Tests.Caching
 
             //Act
             Type tipoValidado = typeof(Nullable<Byte>);
-            bool retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            bool retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<SByte>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<Int32>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<UInt32>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<Int16>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<UInt16>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<Int64>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<UInt64>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<Single>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<Double>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<Char>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<Boolean>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<Decimal>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<DateTime>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<DateTimeOffset>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
 
             //Act
             tipoValidado = typeof(Nullable<Guid>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
+            //Assert
+            Assert.IsTrue(retorno);
+
+            //Act
+            tipoValidado = typeof(Nullable<EnumExemplo>);
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsTrue(retorno);
         }
@@ -249,37 +267,37 @@ namespace Fujiy.Util.Tests.Caching
 
             //Act
             Type tipoValidado = typeof(object);
-            bool retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            bool retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsFalse(retorno);
 
             //Act
             tipoValidado = typeof(Type);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsFalse(retorno);
 
             //Act
             tipoValidado = typeof(Exception);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsFalse(retorno);
 
             //Act
             tipoValidado = typeof(Dictionary<int, int>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsFalse(retorno);
 
             //Act
             tipoValidado = typeof(IEnumerable);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsFalse(retorno);
 
             //Act
             tipoValidado = typeof(List<int>);
-            retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsFalse(retorno);
         }
@@ -293,7 +311,7 @@ namespace Fujiy.Util.Tests.Caching
 
             //Act
             Type tipoValidado = typeof(Nullable<TipoValor>);
-            bool retorno = (bool)metodoIsValidType.Invoke(null, new[] { tipoValidado });
+            bool retorno = (bool)metodoIsValidType.Invoke(null, new object[] { tipoValidado, true });
             //Assert
             Assert.IsFalse(retorno);
         }
@@ -395,6 +413,16 @@ namespace Fujiy.Util.Tests.Caching
             retorno = (string)metodoFormatValue.Invoke(null, new object[] { new Guid("E7E305F7-B6D9-4551-843E-AA56E6BB87DA") });
             //Assert
             Assert.AreEqual("e7e305f7-b6d9-4551-843e-aa56e6bb87da", retorno);
+
+            //Act
+            retorno = (string)metodoFormatValue.Invoke(null, new object[] { EnumExemplo.Primeiro });
+            //Assert
+            Assert.AreEqual("Primeiro", retorno);
+
+            //Act
+            retorno = (string)metodoFormatValue.Invoke(null, new object[] { (EnumExemplo)999 });
+            //Assert
+            Assert.AreEqual("999", retorno);
         }
 
         [TestMethod]
@@ -483,6 +511,11 @@ namespace Fujiy.Util.Tests.Caching
             retorno = (string)metodoFormatValue.Invoke(null, new object[] { new Nullable<Guid>(new Guid("E7E305F7-B6D9-4551-843E-AA56E6BB87DA")) });
             //Assert
             Assert.AreEqual("e7e305f7-b6d9-4551-843e-aa56e6bb87da", retorno);
+
+            //Act
+            retorno = (string)metodoFormatValue.Invoke(null, new object[] { new Nullable<EnumExemplo>(EnumExemplo.Primeiro) });
+            //Assert
+            Assert.AreEqual("Primeiro", retorno);
         }
 
         [TestMethod]
@@ -1119,5 +1152,11 @@ namespace Fujiy.Util.Tests.Caching
 
         public struct TipoValor
         {}
+
+        public enum EnumExemplo
+        {
+            Primeiro,
+            Segundo
+        }
     }
 }

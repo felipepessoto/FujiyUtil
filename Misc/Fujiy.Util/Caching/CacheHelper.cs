@@ -190,23 +190,28 @@ namespace Fujiy.Util.Caching
         {
             for (int i = 0; i < method.Arguments.Count; i++)
             {
-                if (!IsValidType(method.Arguments[i].Type))
+                if (!IsValidType(method.Arguments[i].Type, true))
                 {
-                    throw new InvalidCacheArgumentException(string.Format(CultureInfo.CurrentCulture, "Não foi possível inferir uma chave a partir dos parâmetros. Indice do parametro: {0}. Tipo: {1}", i, method.Arguments[i].Type));
+                    throw new InvalidCacheArgumentException(string.Format(CultureInfo.CurrentCulture, "It was not possible to derive a key from the parameters. Index of the parameter: {0}. Type: {1}", i, method.Arguments[i].Type));
                 }
             }
         }
 
-        private static bool IsValidType(Type type)
+        private static bool IsValidType(Type type, bool validateGeneric)
         {
-            if (type.IsGenericType)
+            if (validateGeneric && type.IsGenericType)
             {
                 Type genericType = type.GetGenericTypeDefinition();
 
-                if (ValidWrappingGenericTypes.Any(t => genericType == t.Type) && type.GetGenericArguments().Except(ValidTypes.Select(x => x.Type)).Count() == 0)
+                if (ValidWrappingGenericTypes.Any(t => genericType == t.Type))
                 {
-                    return true;
+                    return type.GetGenericArguments().All(x => IsValidType(x, false));
                 }
+            }
+
+            if (typeof(Enum).IsAssignableFrom(type))
+            {
+                return true;
             }
 
             return ValidTypes.Any(t => type == t.Type);
@@ -271,6 +276,8 @@ namespace Fujiy.Util.Caching
                 return XmlConvert.ToString((DateTimeOffset)value);
             if (value is Guid)
                 return XmlConvert.ToString((Guid)value);
+            if (value is Enum)
+                return value.ToString();
 
             throw new InvalidCacheArgumentException();
         }
