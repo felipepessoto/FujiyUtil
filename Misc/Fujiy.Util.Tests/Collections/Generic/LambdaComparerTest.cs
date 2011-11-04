@@ -1,5 +1,5 @@
 ﻿using System;
-using Fujiy.Util.ExtensionMethods;
+using Fujiy.Util.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Fujiy.Util.Tests.Collections.Generic

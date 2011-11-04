@@ -41,11 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Caching\CacheKeyGenerator.cs" />
     <Compile Include="Caching\CacheOptions.cs" />
     <Compile Include="Caching\InvalidCacheArgumentException.cs" />
     <Compile Include="Caching\CacheHelper.cs" />
     <Compile Include="Caching\InvalidCachedFuncException.cs" />
-    <Compile Include="ExtensionMethods\LambdaComparer.cs" />
+    <Compile Include="Collections\Generic\LambdaComparer.cs" />
     <Compile Include="Collections\Generic\PagedCollection.cs" />
     <Compile Include="ExtensionMethods\Enumerable.cs" />
     <Compile Include="ExtensionMethods\EnumExtensions.cs" />
