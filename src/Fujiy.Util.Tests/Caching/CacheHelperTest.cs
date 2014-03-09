@@ -451,6 +451,28 @@ namespace Fujiy.Util.Tests.Caching
         }
 
         [TestMethod]
+        public void TestarRemoveCache()
+        {
+            //Arrange
+            Mock<FakeClass> mock = new Mock<FakeClass>();
+            mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
+
+            //Act
+            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"));
+            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"));
+
+            //Assert
+            ILookup<string, string> groupedKeys = CacheHelper.GetAllKeys();
+            Assert.AreEqual(2, groupedKeys.Sum(x => x.Count()));
+
+            CacheHelper.RemoveCache(() => mock.Object.FakeMethod(1, false, "arg"));
+            CacheHelper.RemoveCache(() => mock.Object.FakeMethod(2, false, "arg"));
+
+            groupedKeys = CacheHelper.GetAllKeys();
+            Assert.AreEqual(0, groupedKeys.Sum(x => x.Count()));
+        }
+
+        [TestMethod]
         public void TestarFromCacheOrExecuteComParametroCacheNull()
         {
             //Arrange
