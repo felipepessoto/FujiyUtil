@@ -88,7 +88,7 @@ namespace Fujiy.Util.Tests.Caching
         }
 
         [TestMethod]
-        public void TestarFromCacheOrExecuteRetornoNull()
+        public void TestarFromCacheOrExecuteRetornoNullDeveCachear()
         {
             //Arrange
             Mock<FakeClass> mock = new Mock<FakeClass>();
@@ -102,7 +102,7 @@ namespace Fujiy.Util.Tests.Caching
             CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
 
             //Assert
-            mock.Verify(x => x.FakeMethod(1, false, "arg"), Times.Exactly(5), "Deve chamar 5 vezes. Null não é cacheado");
+            mock.Verify(x => x.FakeMethod(1, false, "arg"), Times.Exactly(1), "Deve chamar 1 vez. Null é cacheado");
         }
 
         [TestMethod]
@@ -323,7 +323,7 @@ namespace Fujiy.Util.Tests.Caching
         }
 
         [TestMethod]
-        public void TestarMetodoRetornaNullComoResultadoNaoDeveIrProKeysGroups()
+        public void TestarMetodoRetornaNullComoResultadoDeveIrProKeysGroups()
         {
             //Arrange
             Mock<FakeClass> mock = new Mock<FakeClass>();
@@ -334,7 +334,7 @@ namespace Fujiy.Util.Tests.Caching
 
             //Assert
             ILookup<string, string> keys = CacheHelper.GetAllKeys();
-            Assert.AreEqual(0, keys.Count);
+            Assert.AreEqual(1, keys.Count);
         }
 
         [TestMethod]

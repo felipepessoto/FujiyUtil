@@ -12,6 +12,7 @@ namespace Fujiy.Util.Caching
     {
         private static readonly Cache DefaultCache = HttpRuntime.Cache;
         private static readonly Dictionary<string, string> KeysGroups = new Dictionary<string, string>();
+        private static readonly object NullValue = new object();
 
         public static readonly string AnonymousGroup = string.Empty;
 
@@ -69,6 +70,9 @@ namespace Fujiy.Util.Caching
                 returnObject = cache[key];
             }
 
+            if (returnObject == NullValue && IsNullable<TResult>())
+                return default(TResult);
+
             if (returnObject is TResult)
             {
                 //Garante que o nome do Grupo será atualizado
@@ -82,12 +86,11 @@ namespace Fujiy.Util.Caching
                     initializer();
                 }
                 returnObject = func.Compile()();
-                if (returnObject != null)
-                {
-                    cache.Add(key, returnObject, cacheOptions.Dependencies, cacheOptions.AbsoluteExpiration,
-                              cacheOptions.SlidingExpiration, cacheOptions.Priority, CacheItemRemovedCallback);
-                    AddKeyOnGroup(cacheOptions.GroupName, key);
-                }
+                
+                cache.Add(key, returnObject ?? NullValue, cacheOptions.Dependencies, cacheOptions.AbsoluteExpiration,
+                            cacheOptions.SlidingExpiration, cacheOptions.Priority, CacheItemRemovedCallback);
+                AddKeyOnGroup(cacheOptions.GroupName, key);
+                
             }
             return (TResult)returnObject;
         }
@@ -106,10 +109,10 @@ namespace Fujiy.Util.Caching
         }
 
          public static void ClearCache()
-        {	 	        
-            foreach (KeyValuePair<string, object> a in DefaultCache)
+        {
+            foreach (DictionaryEntry a in DefaultCache)
             {	 	            
-                DefaultCache.Remove(a.Key);	 	                
+                DefaultCache.Remove(a.Key.ToString());	 	                
             }	 	            
         }
 
@@ -170,5 +173,10 @@ namespace Fujiy.Util.Caching
         }
 
         #endregion
+
+        private static bool IsNullable<T>()
+        {
+            return default(T) == null;
+        }
     }
 }
