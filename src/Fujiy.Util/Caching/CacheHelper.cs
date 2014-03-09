@@ -10,6 +10,7 @@ namespace Fujiy.Util.Caching
 {
     public static class CacheHelper
     {
+        private static readonly Cache DefaultCache = HttpRuntime.Cache;
         private static readonly Dictionary<string, string> KeysGroups = new Dictionary<string, string>();
 
         public static readonly string AnonymousGroup = string.Empty;
@@ -88,8 +89,30 @@ namespace Fujiy.Util.Caching
                     AddKeyOnGroup(cacheOptions.GroupName, key);
                 }
             }
-            return (TResult) returnObject;
+            return (TResult)returnObject;
         }
+
+        public static void RemoveCache<TResult>(Expression<Func<TResult>> func)
+        {
+            MethodCallExpression method = func.Body as MethodCallExpression;
+
+            if (method == null)
+            {
+                throw new InvalidCachedFuncException("Body must be MethodCallExpression to auto generate a cache key");
+            }
+
+            string key = CacheKeyGenerator.GenerateKey(method);
+            DefaultCache.Remove(key);
+        }
+
+         public static void ClearCache()
+        {	 	        
+            foreach (KeyValuePair<string, object> a in DefaultCache)
+            {	 	            
+                DefaultCache.Remove(a.Key);	 	                
+            }	 	            
+        }
+
 
         #region Groups
 
@@ -127,14 +150,6 @@ namespace Fujiy.Util.Caching
             foreach (string chave in chaves)
             {
                 HttpRuntime.Cache.Remove(chave);
-            }
-        }
-
-        public static void ClearCache()
-        {
-            foreach (DictionaryEntry cache in HttpRuntime.Cache)
-            {
-                HttpRuntime.Cache.Remove(cache.Key.ToString());
             }
         }
 
