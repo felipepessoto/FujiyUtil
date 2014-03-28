@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections;
+﻿using Fujiy.Util.Caching;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using System.Web;
-using Fujiy.Util.Caching;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Fujiy.Util.Tests.Caching
 {
@@ -19,10 +17,7 @@ namespace Fujiy.Util.Tests.Caching
         public void TestCleanup()
         {
             CacheHelper.CacheEnabled = true;
-            foreach (DictionaryEntry cache in HttpRuntime.Cache)
-            {
-                HttpRuntime.Cache.Remove(cache.Key.ToString());
-            }
+            CacheHelper.ClearCache();
         }
 
         [TestMethod]
@@ -33,19 +28,19 @@ namespace Fujiy.Util.Tests.Caching
             mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
 
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
 
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
 
             //Assert
             mock.Verify(x => x.FakeMethod(1, false, "arg"), Times.Once(), "Deve chamar uma e somente uma vez. Depois somente usa o cache");
@@ -62,23 +57,23 @@ namespace Fujiy.Util.Tests.Caching
             mock.Setup(x => x.FakeMethodValueType(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(5);
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"));
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"));
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"));
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"));
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"));
 
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"));
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), new CacheOptions());
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"));
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"));
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"));
 
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"));
 
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethodValueType(1, false, "arg"));
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethodValueType(1, false, "arg"));
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethodValueType(1, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethodValueType(1, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethodValueType(1, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethodValueType(1, false, "arg"));
 
             //Assert
             mock.Verify(x => x.FakeMethod(1, false, "arg"), Times.Once(), "Deve chamar uma e somente uma vez. Depois somente usa o cache");
@@ -95,11 +90,11 @@ namespace Fujiy.Util.Tests.Caching
             mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns((string)null);
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
 
             //Assert
             mock.Verify(x => x.FakeMethod(1, false, "arg"), Times.Exactly(1), "Deve chamar 1 vez. Null é cacheado");
@@ -113,20 +108,20 @@ namespace Fujiy.Util.Tests.Caching
             mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
             CacheHelper.CacheEnabled = false;
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
 
             CacheHelper.CacheEnabled = true;
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
             CacheHelper.CacheEnabled = false;
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
 
             
 
@@ -141,7 +136,7 @@ namespace Fujiy.Util.Tests.Caching
             //Act
             try
             {
-                CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => "");
+                CacheHelper.FromCacheOrExecute(() => "");
                 Assert.Fail();
             }
             catch(InvalidCachedFuncException)
@@ -154,14 +149,14 @@ namespace Fujiy.Util.Tests.Caching
         public void TestarFromCacheOrExecuteComFuncExpressionQueNaoEhMethodEComCacheKey()
         {
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => "Conteudo", "ChaveDoCacheQueNaoEhMethodExpression");
+            CacheHelper.FromCacheOrExecute(() => "Conteudo", "ChaveDoCacheQueNaoEhMethodExpression");
         }
 
         [TestMethod]
         public void TestarFromCacheOrExecuteComFuncExpressionQueEhPropertyEComCacheKey()
         {
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => ConcreteFakeClass.FakePropriedade, "ChaveDoCacheQueNaoEhMethodExpression");
+            CacheHelper.FromCacheOrExecute(() => ConcreteFakeClass.FakePropriedade, "ChaveDoCacheQueNaoEhMethodExpression");
         }
 
         [TestMethod]
@@ -172,15 +167,15 @@ namespace Fujiy.Util.Tests.Caching
             mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new CacheOptions { ExecutionInitializer = mock.Object.FakeInitializer });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new CacheOptions { ExecutionInitializer = mock.Object.FakeInitializer });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy { ExecutionInitializer = mock.Object.FakeInitializer });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy { ExecutionInitializer = mock.Object.FakeInitializer });
 
             CacheHelper.ClearCache();
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new CacheOptions { ExecutionInitializer = mock.Object.FakeInitializer });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new CacheOptions { ExecutionInitializer = mock.Object.FakeInitializer });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy { ExecutionInitializer = mock.Object.FakeInitializer });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy { ExecutionInitializer = mock.Object.FakeInitializer });
 
             CacheHelper.ClearCache();
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new CacheOptions { ExecutionInitializer = mock.Object.FakeInitializer });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy { ExecutionInitializer = mock.Object.FakeInitializer });
 
             //Assert
             mock.Verify(x => x.FakeMethod(1, false, "arg"), Times.Exactly(3), "Deve chamar 3 vezes. Na primeira, e sempre depois que limpa o cache");
@@ -196,18 +191,18 @@ namespace Fujiy.Util.Tests.Caching
             DateTime dataExpiracao = DateTime.Now.AddSeconds(2);
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new CacheOptions { AbsoluteExpiration = dataExpiracao });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy { AbsoluteExpiration = dataExpiracao });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
 
             //Assert
             mock.Verify(x => x.FakeMethod(1, false, "arg"), Times.Once(), "Deve chamar uma e somente uma vez. Depois somente usa o cache");
 
             //Act
             Thread.Sleep(3000);
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
 
             //Assert
             mock.Verify(x => x.FakeMethod(1, false, "arg"), Times.Exactly(2), "Deve chamar 2 vezes. Na primeira, e sempre depois que expira o cache");
@@ -222,15 +217,15 @@ namespace Fujiy.Util.Tests.Caching
             TimeSpan tempoExpiracao = new TimeSpan(0, 0, 0, 2);
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new CacheOptions { SlidingExpiration = tempoExpiracao });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy { SlidingExpiration = tempoExpiracao });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
 
             //Assert
             mock.Verify(x => x.FakeMethod(1, false, "arg"), Times.Once(), "Deve chamar uma e somente uma vez. Depois somente usa o cache");
 
             //Act
             Thread.Sleep(3000);
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
 
             //Assert
             mock.Verify(x => x.FakeMethod(1, false, "arg"), Times.Exactly(2), "Deve chamar 2 vezes. Na primeira, e sempre depois que expira o cache");
@@ -271,10 +266,10 @@ namespace Fujiy.Util.Tests.Caching
             mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey3");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey3");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4");
 
             //Assert
             ILookup<string, string> keys = CacheHelper.GetAllKeys();
@@ -295,10 +290,10 @@ namespace Fujiy.Util.Tests.Caching
             mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey3");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey3");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4");
 
             //Assert
             ILookup<string, string> keys = CacheHelper.GetAllKeys();
@@ -310,7 +305,7 @@ namespace Fujiy.Util.Tests.Caching
             Assert.IsTrue(keys[CacheHelper.AnonymousGroup].Contains("cacheKey4"));
 
             const string novoGrupo = "NovoGrupo";
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new CacheOptions { GroupName = novoGrupo });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy { GroupName = novoGrupo });
 
             keys = CacheHelper.GetAllKeys();
             Assert.AreEqual(2, keys.Count);
@@ -330,7 +325,7 @@ namespace Fujiy.Util.Tests.Caching
             mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns<string>(null);
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
 
             //Assert
             ILookup<string, string> keys = CacheHelper.GetAllKeys();
@@ -345,10 +340,10 @@ namespace Fujiy.Util.Tests.Caching
             mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey3");
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey3");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4");
 
             //Assert
             IEnumerable<string> keys = CacheHelper.GetKeysByGroup(CacheHelper.AnonymousGroup);
@@ -359,7 +354,7 @@ namespace Fujiy.Util.Tests.Caching
             Assert.IsTrue(keys.Contains("cacheKey4"));
 
             const string novoGrupo = "NovoGrupo";
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new CacheOptions { GroupName = novoGrupo });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy { GroupName = novoGrupo });
 
             //Act
             keys = CacheHelper.GetKeysByGroup(CacheHelper.AnonymousGroup);
@@ -384,11 +379,11 @@ namespace Fujiy.Util.Tests.Caching
             mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new CacheOptions { GroupName = "GrupoA" });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2", new CacheOptions { GroupName = "GrupoB" });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey3", new CacheOptions { GroupName = "GrupoC" });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4", new CacheOptions { GroupName = "GrupoD" });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4", new CacheOptions { GroupName = "GrupoB" });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy { GroupName = "GrupoA" });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2", new ExtendedCacheItemPolicy { GroupName = "GrupoB" });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey3", new ExtendedCacheItemPolicy { GroupName = "GrupoC" });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4", new ExtendedCacheItemPolicy { GroupName = "GrupoD" });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4", new ExtendedCacheItemPolicy { GroupName = "GrupoB" });
 
             //Assert
             IEnumerable<string> keys = CacheHelper.Groups;
@@ -406,10 +401,10 @@ namespace Fujiy.Util.Tests.Caching
             mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new CacheOptions { GroupName = "GrupoA" });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2", new CacheOptions { GroupName = "GrupoA" });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey3", new CacheOptions { GroupName = "GrupoA" });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4", new CacheOptions { GroupName = "GrupoD" });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy { GroupName = "GrupoA" });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2", new ExtendedCacheItemPolicy { GroupName = "GrupoA" });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey3", new ExtendedCacheItemPolicy { GroupName = "GrupoA" });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4", new ExtendedCacheItemPolicy { GroupName = "GrupoD" });
 
             //Assert
             ILookup<string, string> groupedKeys = CacheHelper.GetAllKeys();
@@ -437,10 +432,10 @@ namespace Fujiy.Util.Tests.Caching
             mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new CacheOptions { GroupName = "GrupoA" });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2", new CacheOptions { GroupName = "GrupoA" });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey3", new CacheOptions { GroupName = "GrupoA" });
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4", new CacheOptions { GroupName = "GrupoD" });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy { GroupName = "GrupoA" });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"), "cacheKey2", new ExtendedCacheItemPolicy { GroupName = "GrupoA" });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey3", new ExtendedCacheItemPolicy { GroupName = "GrupoA" });
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey4", new ExtendedCacheItemPolicy { GroupName = "GrupoD" });
 
             //Assert
             ILookup<string, string> groupedKeys = CacheHelper.GetAllKeys();
@@ -458,8 +453,8 @@ namespace Fujiy.Util.Tests.Caching
             mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
 
             //Act
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(1, false, "arg"));
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => mock.Object.FakeMethod(2, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"));
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(2, false, "arg"));
 
             //Assert
             ILookup<string, string> groupedKeys = CacheHelper.GetAllKeys();
@@ -473,26 +468,6 @@ namespace Fujiy.Util.Tests.Caching
         }
 
         [TestMethod]
-        public void TestarFromCacheOrExecuteComParametroCacheNull()
-        {
-            //Arrange
-            Mock<FakeClass> mock = new Mock<FakeClass>();
-            mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
-
-            try
-            {
-                //Act
-                CacheHelper.FromCacheOrExecute(null, () => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
-                Assert.Fail();
-            }
-            catch (ArgumentNullException ex)
-            {
-                //Assert
-                Assert.AreEqual("cache", ex.ParamName);
-            }
-        }
-
-        [TestMethod]
         public void TestarFromCacheOrExecuteComParametroFuncNull()
         {
             //Arrange
@@ -502,7 +477,7 @@ namespace Fujiy.Util.Tests.Caching
             try
             {
                 //Act
-                CacheHelper.FromCacheOrExecute<object>(HttpRuntime.Cache, null, "cacheKey");
+                CacheHelper.FromCacheOrExecute<object>(null, "cacheKey");
                 Assert.Fail();
             }
             catch (ArgumentNullException ex)
@@ -521,13 +496,13 @@ namespace Fujiy.Util.Tests.Caching
 
             //Act
             Stopwatch stopwatch = Stopwatch.StartNew();
-            CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => concreteFakeClass.FakeMethod(1, true, ""));
+            CacheHelper.FromCacheOrExecute(() => concreteFakeClass.FakeMethod(1, true, ""));
             long msInicial = stopwatch.ElapsedMilliseconds;
             
             stopwatch.Restart();
             for (int i = 0; i < loopCount; i++)
             {
-                CacheHelper.FromCacheOrExecute(HttpRuntime.Cache, () => concreteFakeClass.FakeMethodLong(1, true, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""));
+                CacheHelper.FromCacheOrExecute(() => concreteFakeClass.FakeMethodLong(1, true, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""));
             }
             long ms = stopwatch.ElapsedMilliseconds / loopCount;
 
