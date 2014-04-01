@@ -125,6 +125,23 @@ namespace Fujiy.Util.Tests.Caching
         }
 
         [TestMethod]
+        public void TestarFromCacheOrExecuteMesmaKeyNullValueComValueTypeNullable()
+        {
+            //Arrange
+            Mock<FakeClass> mock = new Mock<FakeClass>();
+            mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns((string)null);
+            mock.Setup(x => x.FakeMethodValueTypeNullable(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(9);
+
+            //Act
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethodValueTypeNullable(1, false, "arg"), "cacheKey");
+
+            //Assert
+            mock.Verify(x => x.FakeMethod(1, false, "arg"), Times.Once(), "Deve chamar uma e somente uma vez. Depois somente usa o cache");
+            mock.Verify(x => x.FakeMethodValueType(1, false, "arg"), Times.Never(), "Deve usar o cache null da string");
+        }
+
+        [TestMethod]
         public void TestarFromCacheOrExecuteRetornoNullDeveCachear()
         {
             //Arrange
@@ -574,10 +591,55 @@ namespace Fujiy.Util.Tests.Caching
             Assert.IsTrue(ms < 10);
         }
 
+        [TestMethod]
+        public void TestarFromCacheRetornoFalse()
+        {
+            //Arrange
+            Mock<FakeClass> mock = new Mock<FakeClass>();
+
+            //Act
+            string result1;
+            var foundCache1 = CacheHelper.FromCache(() => mock.Object.FakeMethod(1, false, "arg"), out result1);
+            string result2;
+            var foundCache2 = CacheHelper.FromCache("cacheNaoExiste", out result2);
+
+            //Assert
+            Assert.IsFalse(foundCache1);
+            Assert.AreEqual(result1, null);
+            Assert.IsFalse(foundCache2);
+            Assert.AreEqual(result2, null);
+        }
+
+        [TestMethod]
+        public void TestarFromCacheRetornoTrue()
+        {
+            //Arrange
+            Mock<FakeClass> mock = new Mock<FakeClass>();
+            mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
+            
+            //Act
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"));
+            string result1;
+            var foundCache1 = CacheHelper.FromCache(() => mock.Object.FakeMethod(1, false, "arg"), out result1);
+
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            string result2;
+            var foundCache2 = CacheHelper.FromCache("cacheKey", out result2);
+
+            //Assert
+            Assert.IsTrue(foundCache1);
+            Assert.AreEqual(result1, "retorno");
+            Assert.IsTrue(foundCache2);
+            Assert.AreEqual(result2, "retorno");
+        }
+
         public abstract class FakeClass
         {
             public abstract string FakeMethod(int a, bool b, string c);
             public abstract int FakeMethodValueType(int a, bool b, string c);
+
+            public abstract int? FakeMethodValueTypeNullable(int a, bool b, string c);
+
             public abstract void FakeInitializer();
             public abstract string FakeMethodArgumentoInvalido(object a);
         }

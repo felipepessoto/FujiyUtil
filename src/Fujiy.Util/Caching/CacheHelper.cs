@@ -54,7 +54,6 @@ namespace Fujiy.Util.Caching
             if (CacheEnabled)
             {
                 returnObject = DefaultCache[key];
-                //TODO da pra usar o FromCache?
             }
 
             ExtendedCacheItemPolicy extCacheItemPolicy = cacheItemPolicy as ExtendedCacheItemPolicy;
@@ -101,7 +100,6 @@ namespace Fujiy.Util.Caching
 
         public static bool FromCache<TResult>(string key, out TResult result)
         {
-            //TODO Unit Test
             if (string.IsNullOrEmpty(key))
             {
                 throw new ArgumentException("A key é obrigatória", "key");
