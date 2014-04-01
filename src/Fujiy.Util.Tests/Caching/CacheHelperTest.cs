@@ -83,6 +83,48 @@ namespace Fujiy.Util.Tests.Caching
         }
 
         [TestMethod]
+        public void TestarFromCacheOrExecuteMesmaKeyDiferenteTiposRetorno()
+        {
+            //Arrange
+            Mock<FakeClass> mock = new Mock<FakeClass>();
+            mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns("retorno");
+            mock.Setup(x => x.FakeMethodValueType(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(9);
+
+            //Act
+            var retornoString1 = CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            var retornoString2 = CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            var retornoInt1 = CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethodValueType(1, false, "arg"), "cacheKey");
+            var retornoInt2 = CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethodValueType(1, false, "arg"), "cacheKey");
+
+            //Assert
+            mock.Verify(x => x.FakeMethod(1, false, "arg"), Times.Once(), "Deve chamar uma e somente uma vez. Depois somente usa o cache");
+            mock.Verify(x => x.FakeMethodValueType(1, false, "arg"), Times.Once(), "Deve chamar uma e somente uma vez. Depois somente usa o cache");
+            Assert.AreEqual(retornoString1, retornoString2);
+            Assert.AreEqual(retornoInt1, retornoInt2);
+        }
+
+        [TestMethod]
+        public void TestarFromCacheOrExecuteMesmaKeyNullValueComValueType()
+        {
+            //Arrange
+            Mock<FakeClass> mock = new Mock<FakeClass>();
+            mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns((string)null);
+            mock.Setup(x => x.FakeMethodValueType(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(9);
+
+            //Act
+            var retornoString1 = CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            var retornoString2 = CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey");
+            var retornoInt1 = CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethodValueType(1, false, "arg"), "cacheKey");
+            var retornoInt2 = CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethodValueType(1, false, "arg"), "cacheKey");
+
+            //Assert
+            mock.Verify(x => x.FakeMethod(1, false, "arg"), Times.Once(), "Deve chamar uma e somente uma vez. Depois somente usa o cache");
+            mock.Verify(x => x.FakeMethodValueType(1, false, "arg"), Times.Once(), "Deve chamar uma e somente uma vez. Depois somente usa o cache");
+            Assert.AreEqual(retornoString1, retornoString2);
+            Assert.AreEqual(retornoInt1, retornoInt2);
+        }
+
+        [TestMethod]
         public void TestarFromCacheOrExecuteRetornoNullDeveCachear()
         {
             //Arrange
@@ -330,6 +372,27 @@ namespace Fujiy.Util.Tests.Caching
             //Assert
             ILookup<string, string> keys = CacheHelper.GetAllKeys();
             Assert.AreEqual(1, keys.Count);
+        }
+
+        [TestMethod]
+        public void TestarMetodoRetornaNullComoResultadoTrocarGroup()
+        {
+            //Arrange
+            Mock<FakeClass> mock = new Mock<FakeClass>();
+            mock.Setup(x => x.FakeMethod(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns<string>(null);
+
+            //Act
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy{GroupName = "Grupo1"});
+
+            //Assert
+            IEnumerable<string> keys = CacheHelper.GetKeysByGroup("Grupo1");
+            Assert.AreEqual(1, keys.Count());
+
+            CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethod(1, false, "arg"), "cacheKey", new ExtendedCacheItemPolicy { GroupName = "Grupo2" });
+            keys = CacheHelper.GetKeysByGroup("Grupo1");
+            Assert.AreEqual(0, keys.Count());
+            keys = CacheHelper.GetKeysByGroup("Grupo2");
+            Assert.AreEqual(1, keys.Count());
         }
 
         [TestMethod]

@@ -46,14 +46,7 @@ namespace Fujiy.Util.Caching
 
             if (string.IsNullOrEmpty(key))
             {
-                MethodCallExpression method = func.Body as MethodCallExpression;
-
-                if (method == null)
-                {
-                    throw new InvalidCachedFuncException("Body must be MethodCallExpression to auto generate a cache key");
-                }
-
-                key = CacheKeyGenerator.GenerateKey(method);
+                key = ExtractKeyFromExpression(func);
             }
 
             object returnObject = null;
@@ -61,35 +54,78 @@ namespace Fujiy.Util.Caching
             if (CacheEnabled)
             {
                 returnObject = DefaultCache[key];
+                //TODO da pra usar o FromCache?
             }
-
-            if (returnObject == NullValue && IsNullable<TResult>())
-                return default(TResult);
 
             ExtendedCacheItemPolicy extCacheItemPolicy = cacheItemPolicy as ExtendedCacheItemPolicy;
 
-            if (!(returnObject is TResult))
+            if (returnObject == NullValue && IsNullable<TResult>())
             {
-                if (extCacheItemPolicy != null)
+                returnObject = default(TResult);
+            }
+            else
+            {
+                if (!(returnObject is TResult))
                 {
-                    Action initializer = extCacheItemPolicy.ExecutionInitializer;
-                    if (initializer != null)
+                    if (extCacheItemPolicy != null)
                     {
-                        initializer();
+                        Action initializer = extCacheItemPolicy.ExecutionInitializer;
+                        if (initializer != null)
+                        {
+                            initializer();
+                        }
                     }
+                    returnObject = func.Compile()();
+
+                    cacheItemPolicy = cacheItemPolicy ?? new CacheItemPolicy();
+
+                    cacheItemPolicy.RemovedCallback += CacheItemRemovedCallback;
+
+                    DefaultCache.Set(key, returnObject ?? NullValue, cacheItemPolicy);
                 }
-                returnObject = func.Compile()();
-
-                cacheItemPolicy = cacheItemPolicy ?? new CacheItemPolicy();
-
-                cacheItemPolicy.RemovedCallback += CacheItemRemovedCallback;
-
-                DefaultCache.Set(key, returnObject ?? NullValue, cacheItemPolicy);
             }
 
             AddKeyOnGroup(extCacheItemPolicy != null ? extCacheItemPolicy.GroupName : AnonymousGroup, key);
 
             return (TResult)returnObject;
+        }
+
+        public static bool FromCache<TResult>(Expression<Func<TResult>> func, out TResult result)
+        {
+            if (func == null)
+                throw new ArgumentNullException("func");
+
+            var key = ExtractKeyFromExpression(func);
+            return FromCache(key, out result);
+        }
+
+        public static bool FromCache<TResult>(string key, out TResult result)
+        {
+            //TODO Unit Test
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentException("A key é obrigatória", "key");
+            }
+
+            if (CacheEnabled)
+            {
+                object returnObject = DefaultCache[key];
+
+                if (returnObject == NullValue && IsNullable<TResult>())
+                {
+                    result = default(TResult);
+                    return true;
+                }
+
+                if (returnObject is TResult)
+                {
+                    result = (TResult)returnObject;
+                    return true;
+                }
+            }
+
+            result = default(TResult);
+            return false;
         }
 
         public static void RemoveCache<TResult>(Expression<Func<TResult>> func)
@@ -113,6 +149,18 @@ namespace Fujiy.Util.Caching
             }
         }
 
+        private static string ExtractKeyFromExpression<TResult>(Expression<Func<TResult>> func)
+        {
+            MethodCallExpression method = func.Body as MethodCallExpression;
+
+            if (method == null)
+            {
+                throw new InvalidCachedFuncException("Body must be MethodCallExpression to auto generate a cache key");
+            }
+
+            string key = CacheKeyGenerator.GenerateKey(method);
+            return key;
+        }
 
         #region Groups
 
