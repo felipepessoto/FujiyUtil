@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Fujiy.Util</id>
+        <version>1.1.0</version>
+        <title>Fujiy Util</title>
+        <authors>Fujiy</authors>
+        <owners>fujiy</owners>
+        <projectUrl>http://blog.fujiy.net/</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>With this package you get data from cache or calling your method writing just one line of code.
+
+Usually you do this(for ValueTypes, but Ref Types are similar):
+
+decimal price;
+
+var returnFromCache = Cache["CarClassGetPrice" + carId];
+
+if(returnFromCache is decimal)
+{
+    price = (decimal)returnFromCache;
+}
+else
+{
+    price = GetPrice(carId);
+    Cache["CarClassGetPrice" + carId] = price;
+}
+
+With Fujiy.Util you just write:
+
+decimal price = CacheHelper.FromCacheOrExecute(() =&gt; myObj.GetPrice(carId));</description>
+        <summary>Caching Library that allows you to easely call a method or get from cache. You don't need to generate unique string keys or check if it's null all over the code.
+And some Collections Extensions.</summary>
+        <releaseNotes>Version 1.1.0
+* Support for Task results. Ignores cached Tasks if Status is Faulted or Canceled</releaseNotes>
+    </metadata>
+    <files>
+        <file src="bin\Release\Fujiy.Util.dll" target="lib\net40\Fujiy.Util.dll" />
+    </files>
+</package>
