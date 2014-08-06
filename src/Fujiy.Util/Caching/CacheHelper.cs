@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Caching;
+using System.Threading.Tasks;
 
 namespace Fujiy.Util.Caching
 {
@@ -60,7 +61,18 @@ namespace Fujiy.Util.Caching
             }
             else
             {
-                if (!(returnObject is TResult))
+                bool hasValueAndIsSameType = (returnObject is TResult);
+
+                if (hasValueAndIsSameType)
+                {
+                    Task taskValue = returnObject as Task;
+                    if (taskValue != null && (taskValue.Status == TaskStatus.Canceled || taskValue.Status == TaskStatus.Faulted))
+                    {
+                        hasValueAndIsSameType = false;
+                    }
+                }
+
+                if (hasValueAndIsSameType == false)
                 {
                     if (extCacheItemPolicy != null)
                     {

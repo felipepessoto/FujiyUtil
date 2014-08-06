@@ -1,4 +1,5 @@
-﻿using Fujiy.Util.Caching;
+﻿using System.Threading.Tasks;
+using Fujiy.Util.Caching;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -101,6 +102,40 @@ namespace Fujiy.Util.Tests.Caching
             mock.Verify(x => x.FakeMethodValueType(1, false, "arg"), Times.Once(), "Deve chamar uma e somente uma vez. Depois somente usa o cache");
             Assert.AreEqual(retornoString1, retornoString2);
             Assert.AreEqual(retornoInt1, retornoInt2);
+        }
+
+
+        [TestMethod]
+        public async Task TestarFromCacheOrExecuteRetornoTaskCancelada()
+        {
+            //Arrange
+            Mock<FakeClass> mock = new Mock<FakeClass>();
+            CancellationTokenSource tks = new CancellationTokenSource();
+            mock.Setup(x => x.FakeMethodTask(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>())).Returns(() => Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromHours(1), tks.Token);
+                return 1;
+            }, tks.Token));
+
+            //Act
+            var chamada1 = CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethodTask(1, false, "arg"));
+            var chamada2 = CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethodTask(1, false, "arg"));
+
+            tks.Cancel();
+            try
+            {
+                await chamada2;
+            }
+            catch (OperationCanceledException) { }
+
+            var chamada3 = CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethodTask(1, false, "arg"));
+            var chamada4 = CacheHelper.FromCacheOrExecute(() => mock.Object.FakeMethodTask(1, false, "arg"));
+
+            //Assert
+            mock.Verify(x => x.FakeMethodTask(1, false, "arg"), Times.Exactly(3), "Task Cancelada não deve ser usada no cache");
+            Assert.AreEqual(chamada1, chamada2);
+            Assert.AreNotEqual(chamada2, chamada3);
+            Assert.AreNotEqual(chamada3, chamada4);
         }
 
         [TestMethod]
@@ -636,6 +671,9 @@ namespace Fujiy.Util.Tests.Caching
         public abstract class FakeClass
         {
             public abstract string FakeMethod(int a, bool b, string c);
+
+            public abstract Task<int> FakeMethodTask(int a, bool b, string c);
+
             public abstract int FakeMethodValueType(int a, bool b, string c);
 
             public abstract int? FakeMethodValueTypeNullable(int a, bool b, string c);

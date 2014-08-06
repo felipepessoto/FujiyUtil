@@ -1,4 +1,4 @@
-﻿#region BSD License
+#region BSD License
 /* 
 Copyright (c) 2010, NETFx
 All rights reserved.
@@ -14,28 +14,29 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #endregion
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
-using System.Dynamic;
-using System.Collections;
-using System.Globalization;
 using System.Runtime.Serialization;
+using Microsoft.CSharp.RuntimeBinder;
+using System.Runtime.CompilerServices;
 
 namespace System.Dynamic
 {
 	/// <summary>
 	/// Provides reflection-based dynamic syntax for objects and types. 
-	/// This class provides the extension methods <see cref="AsReflectionDynamic{object}"/> 
-	/// and <see cref="AsReflectionDynamic{Type}"/> as entry points.
+	/// This class provides the extension methods <see cref="AsDynamicReflection(object)"/> 
+	/// and <see cref="AsDynamicReflection(Type)"/> as entry points.
 	/// </summary>
-	internal static class DynamicReflection
+	/// <nuget id="netfx-System.Dynamic.Reflection" />
+	static partial class DynamicReflection
 	{
 		/// <summary>
 		/// Provides dynamic syntax for accessing the given object members.
 		/// </summary>
+		/// <nuget id="netfx-System.Dynamic.Reflection" />
+		/// <param name="obj" this="true">The object to access dinamically</param>
 		public static dynamic AsDynamicReflection(this object obj)
 		{
 			if (obj == null)
@@ -47,6 +48,8 @@ namespace System.Dynamic
 		/// <summary>
 		/// Provides dynamic syntax for accessing the given type members.
 		/// </summary>
+		/// <nuget id="netfx-System.Dynamic.Reflection" />
+		/// <param name="type" this="true">The type to access dinamically</param>
 		public static dynamic AsDynamicReflection(this Type type)
 		{
 			if (type == null)
@@ -60,6 +63,8 @@ namespace System.Dynamic
 		/// the reflection dynamic must use to make a generic 
 		/// method invocation.
 		/// </summary>
+		/// <nuget id="netfx-System.Dynamic.Reflection" />
+		/// <param name="type" this="true">The type to convert</param>
 		public static TypeParameter AsGenericTypeParameter(this Type type)
 		{
 			return new TypeParameter(type);
@@ -114,53 +119,19 @@ namespace System.Dynamic
 				return false;
 			}
 
-			private static object Invoke(IInvocable method, object instance, object[] args)
-			{
-				var finalArgs = args.Where(x => !(x is TypeParameter)).ToArray();
-				var refArgs = new Dictionary<int, RefValue>();
-				var outArgs = new Dictionary<int, OutValue>();
-				for (int i = 0; i < method.Parameters.Count; i++)
-				{
-					if (method.Parameters[i].ParameterType.IsByRef)
-					{
-						var refArg = finalArgs[i] as RefValue;
-						var outArg = finalArgs[i] as OutValue;
-						if (refArg != null)
-							refArgs[i] = refArg;
-						else if (outArg != null)
-							outArgs[i] = outArg;
-					}
-				}
-
-				foreach (var refArg in refArgs)
-				{
-					finalArgs[refArg.Key] = refArg.Value.Value;
-				}
-				foreach (var outArg in outArgs)
-				{
-					finalArgs[outArg.Key] = null;
-				}
-
-				var result = method.Invoke(instance, finalArgs);
-
-				foreach (var refArg in refArgs)
-				{
-					refArg.Value.Value = finalArgs[refArg.Key];
-				}
-				foreach (var outArg in outArgs)
-				{
-					outArg.Value.Value = finalArgs[outArg.Key];
-				}
-
-				return result;
-			}
-
 			public override bool TryGetMember(GetMemberBinder binder, out object result)
 			{
 				if (!base.TryGetMember(binder, out result))
 				{
-					var field = targetType.GetField(binder.Name, flags);
-					if (field != null)
+                    var field = targetType.GetField(binder.Name, flags);
+                    var baseType = targetType.BaseType;
+                    while (field == null && baseType != null)
+                    {
+                        field = baseType.GetField(binder.Name, flags);
+                        baseType = baseType.BaseType;
+                    }
+                    
+                    if (field != null)
 					{
 						result = AsDynamicIfNecessary(field.GetValue(target));
 						return true;
@@ -174,6 +145,13 @@ namespace System.Dynamic
 					}
 				}
 
+                // \o/ If nothing else works, and the member is "target", return our target.
+                if (binder.Name == "target")
+                {
+                    result = this.target;
+                    return true;
+                }
+
 				result = default(object);
 				return false;
 			}
@@ -182,8 +160,15 @@ namespace System.Dynamic
 			{
 				if (!base.TrySetMember(binder, value))
 				{
-					var field = targetType.GetField(binder.Name, flags);
-					if (field != null)
+                    var field = targetType.GetField(binder.Name, flags);
+                    var baseType = targetType.BaseType;
+                    while (field == null && baseType != null)
+                    {
+                        field = baseType.GetField(binder.Name, flags);
+                        baseType = baseType.BaseType;
+                    }
+                    
+                    if (field != null)
 					{
 						field.SetValue(target, value);
 						return true;
@@ -257,10 +242,69 @@ namespace System.Dynamic
 				return false;
 			}
 
+            private static object Invoke(IInvocable method, object instance, object[] args)
+            {
+                var finalArgs = args.Where(x => !(x is TypeParameter)).Select(UnboxDynamic).ToArray();
+                var refArgs = new Dictionary<int, RefValue>();
+                var outArgs = new Dictionary<int, OutValue>();
+                for (int i = 0; i < method.Parameters.Count; i++)
+                {
+                    if (method.Parameters[i].ParameterType.IsByRef)
+                    {
+                        var refArg = finalArgs[i] as RefValue;
+                        var outArg = finalArgs[i] as OutValue;
+                        if (refArg != null)
+                            refArgs[i] = refArg;
+                        else if (outArg != null)
+                            outArgs[i] = outArg;
+                    }
+                }
+
+                foreach (var refArg in refArgs)
+                {
+                    finalArgs[refArg.Key] = refArg.Value.Value;
+                }
+                foreach (var outArg in outArgs)
+                {
+                    finalArgs[outArg.Key] = null;
+                }
+
+                var result = method.Invoke(instance, finalArgs);
+
+                foreach (var refArg in refArgs)
+                {
+                    refArg.Value.Value = finalArgs[refArg.Key];
+                }
+                foreach (var outArg in outArgs)
+                {
+                    outArg.Value.Value = finalArgs[outArg.Key];
+                }
+
+                return result;
+            }
+
+            /// <summary>
+            /// Converts dynamic objects to object, which may cause unboxing 
+            /// of the wrapped dynamic such as in our own DynamicReflectionObject type.
+            /// </summary>
+            private static object UnboxDynamic(object maybeDynamic)
+            {
+                var dyn = maybeDynamic as DynamicObject;
+                if (dyn == null)
+                    return maybeDynamic;
+
+                var binder = (ConvertBinder)Microsoft.CSharp.RuntimeBinder.Binder.Convert(CSharpBinderFlags.ConvertExplicit, typeof(object), typeof(DynamicReflectionObject));
+                //var site = CallSite<Func<CallSite, object, object>>.Create(binder);
+                object result;
+                dyn.TryConvert(binder, out result);
+
+                return result;
+            }
+
 			private IInvocable FindBestMatch(DynamicMetaObjectBinder binder, string memberName, object[] args)
 			{
-				var finalArgs = args.Where(x => !(x is TypeParameter)).ToArray();
-				var genericTypeArgs = new List<Type>();
+                var finalArgs = args.Where(x => !(x is TypeParameter)).Select(UnboxDynamic).ToArray();
+                var genericTypeArgs = new List<Type>();
 
 				if (binder is InvokeBinder || binder is InvokeMemberBinder)
 				{
@@ -349,6 +393,9 @@ namespace System.Dynamic
 			{
 				if (arg is RefValue || arg is OutValue)
 					return arg.GetType().GetGenericArguments()[0].MakeByRefType();
+                if (arg is DynamicReflectionObject)
+                    return ((DynamicReflectionObject)arg).target.GetType();
+
 				return arg.GetType();
 			}
 
